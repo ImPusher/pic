@@ -83,7 +83,8 @@ class dfa:
             graph.add_edge(pydot.Edge(str(int(i/2)), str(self.delta[i]), label=str(i%2), dir="forward"))
         graph.write_png("out.png")
         graph.write_png("out" + str(self.count_final) + ".png")
-        #display(ImageDisplay(filename='out.png'))
+        if to_print:
+            display(ImageDisplay(filename='out.png'))
         
     def show_dfa(self):
         print()
@@ -132,7 +133,7 @@ class dfa:
                     self.count += 1
                     
                     #print("\r" + str(self.count), end="", flush=True)
-                    if self.update_final_states() and self.is_minimum():
+                    if self.update_final_states() and self.is_minimal():
                         self.count_final += 1
                         if to_print:
                             print("end of update")
@@ -166,7 +167,7 @@ class dfa:
         self.not_f = list(set(tuple(self.not_f)))
         return True
     
-    def is_minimum(self):
+    def is_minimal(self):
         marked = {}
         for x in itertools.combinations(range(self.n), 2):
             marked[x] = [0]
@@ -224,7 +225,7 @@ class dfa:
             return
         elif state not in self.not_f:
             self.add_final_state(state)
-            if self.is_minimum():
+            if self.is_minimal():
                 self.draw_dfa()
                 self.count += 1
                 self.count_final += 1

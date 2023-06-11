@@ -140,16 +140,23 @@ num_final_dfa_label = tk.Label(root, text="Number of guesses: " + str(guess.coun
 num_final_dfa_label.grid(row=3, column=0, padx=10, pady=10)
 
 
-image_path = "out.png"
+curr_image = 0
+
+image_path = "out" + str(guess.count_final-1) + ".png"
 image = Image.open(image_path)
 tk_image = ImageTk.PhotoImage(image)
 
 image_box = tk.Canvas(root, width=image.width, height=image.height, bg="white")
-image_box.grid(row=0, column=2, rowspan=2, padx=10, pady=10)
+image_box.grid(row=0, column=2, rowspan=2)
 image_box.create_image(0, 0, image=tk_image, anchor="nw")
 
+
 def update_dfa_image():
-    image_path = "out.png"
+    global curr_image
+    curr_image = guess.count_final-1
+    
+    
+    image_path = "out" + str(guess.count_final-1) + ".png"
     image = Image.open(image_path)
     tk_image = ImageTk.PhotoImage(image)
     
@@ -157,6 +164,9 @@ def update_dfa_image():
     image_box.configure(width=image.width, height=image.height)
     image_box.create_image(0, 0, image=tk_image, anchor="nw")
     image_box.image = tk_image
+    
+    global image_label
+    image_label.configure(text=image_path)
     
     global num_processed_dfa_label
     num_processed_dfa_label.configure(text="Number of Dfa's processed: " + str(guess.count))
@@ -166,5 +176,60 @@ def update_dfa_image():
     
     root.update_idletasks()
     root.geometry('{}x{}'.format(root.winfo_reqwidth(), root.winfo_reqheight()))
+
+def next_dfa_image():
+    global curr_image
+    curr_image += 1
+    curr_image = curr_image % guess.count_final
+    image_path = "out" + str(curr_image) + ".png"
+    image = Image.open(image_path)
+    tk_image = ImageTk.PhotoImage(image)
+    
+    global image_box
+    image_box.configure(width=image.width, height=image.height)
+    image_box.create_image(0, 0, image=tk_image, anchor="nw")
+    image_box.image = tk_image
+    
+    global image_label
+    image_label.configure(text=image_path)
+    
+    root.update_idletasks()
+    root.geometry('{}x{}'.format(root.winfo_reqwidth(), root.winfo_reqheight()))
+
+def prev_dfa_image():
+    global curr_image
+    curr_image -= 1
+    curr_image = curr_image % guess.count_final
+    image_path = "out" + str(curr_image) + ".png"
+    image = Image.open(image_path)
+    tk_image = ImageTk.PhotoImage(image)
+    
+    global image_box
+    image_box.configure(width=image.width, height=image.height)
+    image_box.create_image(0, 0, image=tk_image, anchor="nw")
+    image_box.image = tk_image
+    
+    global image_label
+    image_label.configure(text=image_path)
+
+    root.update_idletasks()
+    root.geometry('{}x{}'.format(root.winfo_reqwidth(), root.winfo_reqheight()))
+
+image_label = tk.Label(root, text=image_path, bg="white")
+image_label.grid(row=2, column=2)
+
+
+image_button_frame = tk.Frame(root)
+image_button_frame.grid(row=3, column=2, padx=10, pady=10)
+
+
+backwards_button = tk.Button(image_button_frame, text="<", command=prev_dfa_image)
+backwards_button.pack(side=tk.LEFT, padx=5)
+
+forward_button = tk.Button(image_button_frame, text=">", command=next_dfa_image)
+forward_button.pack(side=tk.LEFT, padx=5) 
+
+
+root.mainloop()
 
 root.mainloop()
