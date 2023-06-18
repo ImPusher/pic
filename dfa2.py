@@ -71,7 +71,6 @@ class dfa:
         self.draw_dfa()
         
     def draw_dfa(self):
-        self.show_dfa()
         graph = pydot.Dot("dfa", graph_type="graph", bgcolor="white")
         graph.add_node(pydot.Node(" ", shape="none", height=.0, width=.0))
         for i in range(self.n):
@@ -132,8 +131,7 @@ class dfa:
                         print("delta: ",self.delta)
                     #print(self.delta)
                     self.count += 1
-                    if self.count%10000 == 0:
-                        print(self.count)
+                    
                     #print("\r" + str(self.count), end="", flush=True)
                     if self.update_final_states() and self.is_minimal():
                         self.count_final += 1
@@ -250,7 +248,6 @@ class dfa:
     def add_string(self, is_in, string):
         if to_print:
             print("adding: ", is_in, string, "\n")
-        
         self.strings += [(is_in, string)]
         
         string_final_state = self.get_final_state_by_index(-1)

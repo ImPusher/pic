@@ -14,8 +14,6 @@ image_ratio = 1
 
 guess = dfa(0,0)
 
-
-
 accepted_strings = [] #test
 
 accepted_frame = tk.Frame(root)
@@ -277,5 +275,6 @@ image_size_input = tk.Entry(image_size_input_frame)
 image_size_input.grid(row=0, column=0)
 image_size_button = tk.Button(image_size_input_frame, text="Set image size", command=set_image_size)
 image_size_button.grid(row=0, column=1)
+
 
 root.mainloop()
