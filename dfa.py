@@ -82,7 +82,7 @@ class dfa:
         for i in range(len(self.delta)):
             graph.add_edge(pydot.Edge(str(int(i/2)), str(self.delta[i]), label=str(i%2), dir="forward"))
         graph.write_png("out.png")
-        graph.write_png("out" + str(self.count_final) + ".png")
+        graph.write_png("out" + str(self.count_final-1) + ".png")
         if to_print:
             display(ImageDisplay(filename='out.png'))
         
@@ -226,9 +226,9 @@ class dfa:
         elif state not in self.not_f:
             self.add_final_state(state)
             if self.is_minimal():
-                self.draw_dfa()
                 self.count += 1
                 self.count_final += 1
+                self.draw_dfa()
                 return
         self.update_dfa()
         
@@ -239,6 +239,11 @@ class dfa:
             self.add_not_final_state(state)
             return
         self.update_dfa()
+    
+    def known_string(self, string):
+        if (0, string) in self.strings or (1, string) in self.strings:
+            return True
+        return False
     
     def add_string(self, is_in, string):
         if to_print:

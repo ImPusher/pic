@@ -1,17 +1,18 @@
 from dfa import *
 import tkinter as tk
+from tkinter import font as tkFont
 from PIL import ImageTk, Image
 import timeit
 import itertools
 import pydot
 
 root = tk.Tk()
+
 k = 2
 to_print = False
+image_ratio = 1
 
 guess = dfa(0,0)
-
-
 
 accepted_strings = [] #test
 
@@ -74,7 +75,7 @@ def restore_accepted_text(event):
 
 def accept_string():
     string = accept_input.get()
-    if string == accept_text:
+    if string == accept_text or guess.known_string(string):
         return
     guess.add_string(1, string)
     add_accepted_string(string)
@@ -108,7 +109,7 @@ def restore_rejected_text(event):
         
 def reject_string():
     string = reject_input.get()
-    if string == reject_text:
+    if string == reject_text or guess.known_string(string):
         return
     guess.add_string(0, string)
     add_rejected_string(string)
@@ -132,7 +133,6 @@ reject_input.grid(row=0, column=1)
 reject_button = tk.Button(rejected_input_frame, text="Reject string", command=reject_string)
 reject_button.grid(row=1, column=1)
 
-
 num_processed_dfa_label = tk.Label(root, text="Number of Dfa's processed: " + str(guess.count))
 num_processed_dfa_label.grid(row=2, column=0, padx=10, pady=10)
 
@@ -144,6 +144,7 @@ curr_image = 0
 
 image_path = "out" + str(guess.count_final-1) + ".png"
 image = Image.open(image_path)
+image = image.resize((round(image.width*image_ratio), round(image.height*image_ratio)))
 tk_image = ImageTk.PhotoImage(image)
 
 image_box = tk.Canvas(root, width=image.width, height=image.height, bg="white")
@@ -158,6 +159,7 @@ def update_dfa_image():
     
     image_path = "out" + str(guess.count_final-1) + ".png"
     image = Image.open(image_path)
+    image = image.resize((round(image.width*image_ratio), round(image.height*image_ratio)))
     tk_image = ImageTk.PhotoImage(image)
     
     global image_box
@@ -183,6 +185,7 @@ def next_dfa_image():
     curr_image = curr_image % guess.count_final
     image_path = "out" + str(curr_image) + ".png"
     image = Image.open(image_path)
+    image = image.resize((round(image.width*image_ratio), round(image.height*image_ratio)))
     tk_image = ImageTk.PhotoImage(image)
     
     global image_box
@@ -202,6 +205,7 @@ def prev_dfa_image():
     curr_image = curr_image % guess.count_final
     image_path = "out" + str(curr_image) + ".png"
     image = Image.open(image_path)
+    image = image.resize((round(image.width*image_ratio), round(image.height*image_ratio)))
     tk_image = ImageTk.PhotoImage(image)
     
     global image_box
@@ -229,7 +233,48 @@ backwards_button.pack(side=tk.LEFT, padx=5)
 forward_button = tk.Button(image_button_frame, text=">", command=next_dfa_image)
 forward_button.pack(side=tk.LEFT, padx=5) 
 
+def set_font_size():
+    size = int(font_size_input.get())
+    tkFont.nametofont("TkDefaultFont").configure(size=size)
+    tkFont.nametofont("TkTextFont").configure(size=size) 
 
-root.mainloop()
+font_size_input_frame = tk.Frame(root)
+font_size_input_frame.grid(row=4, column=0, padx=10, pady=10)
+
+font_size_input = tk.Entry(font_size_input_frame)
+font_size_input.grid(row=0, column=0)
+font_size_button = tk.Button(font_size_input_frame, text="Set font size", command=set_font_size)
+font_size_button.grid(row=0, column=1)
+
+def set_image_size():
+    size = float(image_size_input.get())
+    global image_ratio
+    image_ratio = size
+    
+    global curr_image
+    image_path = "out" + str(curr_image) + ".png"
+    image = Image.open(image_path)
+    image = image.resize((round(image.width*image_ratio), round(image.height*image_ratio)))
+    tk_image = ImageTk.PhotoImage(image)
+    
+    global image_box
+    image_box.configure(width=image.width, height=image.height)
+    image_box.create_image(0, 0, image=tk_image, anchor="nw")
+    image_box.image = tk_image
+    
+    global image_label
+    image_label.configure(text=image_path)
+    
+    root.update_idletasks()
+    root.geometry('{}x{}'.format(root.winfo_reqwidth(), root.winfo_reqheight()))
+
+image_size_input_frame = tk.Frame(root)
+image_size_input_frame.grid(row=5, column=0, padx=10, pady=10)
+
+image_size_input = tk.Entry(image_size_input_frame)
+image_size_input.grid(row=0, column=0)
+image_size_button = tk.Button(image_size_input_frame, text="Set image size", command=set_image_size)
+image_size_button.grid(row=0, column=1)
+
 
 root.mainloop()
