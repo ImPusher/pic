@@ -95,6 +95,9 @@ class dfa:
         print("f: ", self.f)
         print("not_f: ", self.not_f)
         print("strings: ", self.strings, "\n")
+        
+    def get_strings(self):
+        return self.strings
     
     def verify_last_string(self):
         (target, string) = self.strings[-1]
