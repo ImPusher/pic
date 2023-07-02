@@ -1,12 +1,10 @@
 from dfa import *
 import os
 import tkinter as tk
+import math
 from tkinter import font as tkFont
 from tkinter import filedialog
 from PIL import ImageTk, Image
-import timeit
-import itertools
-import pydot
 
 root = tk.Tk()
 
@@ -15,10 +13,6 @@ to_print = False
 image_ratio = 1
 
 guess = dfa(0,0)
-
-
-
-accepted_strings = [] #test
 
 accepted_frame = tk.Frame(root)
 accepted_frame.grid(row=1, column=0, padx=10, pady=10)
@@ -35,15 +29,11 @@ accepted_listbox.pack(side=tk.LEFT, fill=tk.BOTH)
 accepted_scrollbar.config(command=accepted_listbox.yview)
 
 def add_accepted_string(string):
-    accepted_strings.append(string)
     if string == "":
         accepted_listbox.insert(tk.END, "eps")
     else:
-        accepted_listbox.insert(tk.END, accepted_strings[-1])
+        accepted_listbox.insert(tk.END, string)
    
-   
-        
-rejected_strings = [] #test
 
 rejected_frame = tk.Frame(root)
 rejected_frame.grid(row=1, column=1, padx=10, pady=10)
@@ -60,11 +50,10 @@ rejected_listbox.pack(side=tk.LEFT, fill=tk.BOTH)
 rejected_scrollbar.config(command=rejected_listbox.yview)
 
 def add_rejected_string(string):
-    rejected_strings.append(string)
     if string == "":
         rejected_listbox.insert(tk.END, "eps")
     else:
-        rejected_listbox.insert(tk.END, rejected_strings[-1])
+        rejected_listbox.insert(tk.END, string)
         
         
 def clear_accepted_text(event):
@@ -151,9 +140,9 @@ num_final_dfa_label.grid(row=3, column=1, padx=10, pady=10)
 
 curr_image = 0
 
-image_path = "out" + str(guess.count_final-1) + ".png"
+image_path = "./last/out" + str(guess.count_final-1) + ".png"
 image = Image.open(image_path)
-image = image.resize((round(image.width*image_ratio), round(image.height*image_ratio)))
+image = image.resize((math.floor(image.width*image_ratio), math.floor(image.height*image_ratio)))
 tk_image = ImageTk.PhotoImage(image)
 
 image_box = tk.Canvas(root, width=image.width, height=image.height, bg="white")
@@ -166,9 +155,9 @@ def update_dfa_image():
     curr_image = guess.count_final-1
     
     
-    image_path = "out" + str(guess.count_final-1) + ".png"
+    image_path = "./last/out" + str(guess.count_final-1) + ".png"
     image = Image.open(image_path)
-    image = image.resize((round(image.width*image_ratio), round(image.height*image_ratio)))
+    image = image.resize((math.floor(image.width*image_ratio), math.floor(image.height*image_ratio)))
     tk_image = ImageTk.PhotoImage(image)
     
     global image_box
@@ -192,13 +181,13 @@ def next_dfa_image():
     global curr_image
     curr_image += 1
     curr_image = curr_image % guess.count_final
-    image_path = "out" + str(curr_image) + ".png"
+    image_path = "./last/out" + str(curr_image) + ".png"
     image = Image.open(image_path)
-    image = image.resize((round(image.width*image_ratio), round(image.height*image_ratio)))
+    image = image.resize((math.floor(image.width*image_ratio), math.floor(image.height*image_ratio)))
     tk_image = ImageTk.PhotoImage(image)
     
     global image_box
-    image_box.configure(width=image.width, height=image.height)
+    image_box.configure(width=math.floor(image.width), height=math.floor(image.height))
     image_box.create_image(0, 0, image=tk_image, anchor="nw")
     image_box.image = tk_image
     
@@ -212,9 +201,9 @@ def prev_dfa_image():
     global curr_image
     curr_image -= 1
     curr_image = curr_image % guess.count_final
-    image_path = "out" + str(curr_image) + ".png"
+    image_path = "./last/out" + str(curr_image) + ".png"
     image = Image.open(image_path)
-    image = image.resize((round(image.width*image_ratio), round(image.height*image_ratio)))
+    image = image.resize((math.floor(image.width*image_ratio), math.floor(image.height*image_ratio)))
     tk_image = ImageTk.PhotoImage(image)
     
     global image_box
@@ -261,9 +250,9 @@ def set_image_size():
     image_ratio = size
     
     global curr_image
-    image_path = "out" + str(curr_image) + ".png"
+    image_path = "./last/out" + str(curr_image) + ".png"
     image = Image.open(image_path)
-    image = image.resize((round(image.width*image_ratio), round(image.height*image_ratio)))
+    image = image.resize((math.floor(image.width*image_ratio), math.floor(image.height*image_ratio)))
     tk_image = ImageTk.PhotoImage(image)
     
     global image_box
@@ -300,24 +289,31 @@ def load_file():
         with open(file_path, 'r') as file:
             reset_dfa()
             for line in file:
-                print(line)
                 string = line.split()
-                if int(string[0]):
-                    accept_string(string[1])
+                if string[1] == "eps":
+                    if int(string[0]):
+                        accept_string("")
+                    else:
+                        reject_string("")
                 else:
-                    reject_string(string[1])
+                    if int(string[0]):
+                        accept_string(string[1])
+                    else:
+                        reject_string(string[1])
             
 
 
 def export_file():
     script_dir = os.path.dirname(os.path.abspath(__file__))
-    file_path = filedialog.asksaveasfilename(initialdir=script_dir)
     
-    if file_path:
-        with open(file_path, 'w') as file:
-            for string in guess.get_strings():
-                file.write(str(string[0]) + " " + string[1] + "\n")
-
+    folder_path = filedialog.askdirectory(initialdir=script_dir)
+    
+    if folder_path:
+        for file in os.listdir("./last/"):
+            file_path = os.path.join("./last/", file)
+            destination_path = os.path.join(folder_path, file)
+            shutil.copy2(file_path, destination_path)
+        
 options_frame = tk.Frame(root)
 options_frame.grid(row=0, column=2, padx=10, pady=10)
 

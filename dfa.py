@@ -1,8 +1,8 @@
-import timeit
 import itertools
 import pydot
-from IPython.display import Image as ImageDisplay
-from IPython.display import display
+import os
+import shutil
+
 k = 2
 to_print = False
 
@@ -68,11 +68,18 @@ class dfa:
         self.not_f = not_f.copy()
         self.count = 1
         self.count_final = 1
+        self.start()
+    
+    def start(self):
+        if os.path.exists("./last"):
+            shutil.rmtree("./last", ignore_errors=True)
+        file = open("./last/strings.txt", 'w')
+        file.close()    
         self.draw_dfa()
-        
+    
     def draw_dfa(self):
-        self.show_dfa()
         graph = pydot.Dot("dfa", graph_type="graph", bgcolor="white")
+        graph.set_rankdir("LR")
         graph.add_node(pydot.Node(" ", shape="none", height=.0, width=.0))
         for i in range(self.n):
             if i in self.f:
@@ -82,10 +89,7 @@ class dfa:
         graph.add_edge(pydot.Edge(" ", "0", label="", dir="both", arrowtail="dot"))
         for i in range(len(self.delta)):
             graph.add_edge(pydot.Edge(str(int(i/2)), str(self.delta[i]), label=str(i%2), dir="forward"))
-        graph.write_png("out.png")
-        graph.write_png("out" + str(self.count_final-1) + ".png")
-        if to_print:
-            display(ImageDisplay(filename='out.png'))
+        graph.write_png("./last/out" + str(self.count_final-1) + ".png")
         
     def show_dfa(self):
         print()
@@ -133,17 +137,16 @@ class dfa:
                 while self.delta != -1:
                     if to_print:
                         print("delta: ",self.delta)
-                    #print(self.delta)
                     self.count += 1
                     if self.count%10000 == 0:
-                        print(self.count)
-                    #print("\r" + str(self.count), end="", flush=True)
+                        print("\r" + str(self.count) + " dfas processed", end="", flush=True)
                     if self.update_final_states() and self.is_minimal():
                         self.count_final += 1
                         if to_print:
                             print("end of update")
                             self.show_dfa()
                         self.draw_dfa()
+                        print("\r" + str(self.count) + " dfas processed", end="", flush=True)
                         return
                     self.delta = nextdfa(self.delta, self.flag)
 
@@ -180,10 +183,8 @@ class dfa:
         not_f = [x for x in range(self.n) if x not in self.f]
         for x in itertools.product(self.f, not_f):
             marked[sort_tuple(x)] = [1]
-        #print("initial marked: ", marked)
         found = False
         for x in list(itertools.combinations(self.f, 2)) + list(itertools.combinations(not_f, 2)):
-            #print("proc: ", x)
             for i in range(k):
                 next_pair = [self.delta[k*x[0]+i], self.delta[k*x[1]+i]]
                 next_pair.sort()
@@ -194,7 +195,6 @@ class dfa:
                 found = True
                 to_mark = [x]
                 while len(to_mark) != 0:
-                    #print(to_mark)
                     if to_mark[0] in marked:
                         target = marked[to_mark[0]]
                         target[0] = 1
@@ -202,7 +202,6 @@ class dfa:
                             if marked[x][0] == 0:
                                 to_mark += [x]
                     to_mark = to_mark[1:]
-                #print("after marking: ", marked)
             if not found:
                 for i in range(k):
                     next_pair = [self.delta[k*x[0]+i], self.delta[k*x[1]+i]]
@@ -210,7 +209,6 @@ class dfa:
                     next_pair = tuple(next_pair)
                     if next_pair[0] != next_pair[1]:
                         marked[next_pair] += [x]
-                #print("after adding: ", marked)
             found = False
         for x in marked.values():
             if x[0] == 0:
@@ -255,6 +253,12 @@ class dfa:
             print("adding: ", is_in, string, "\n")
         
         self.strings += [(is_in, string)]
+        file = open("./last/strings.txt", 'a')
+        if string == "":
+            file.write(str(is_in) + " " + "eps" + "\n")
+        else:
+            file.write(str(is_in) + " " + string + "\n")
+        file.close()
         
         string_final_state = self.get_final_state_by_index(-1)
         
