@@ -234,7 +234,10 @@ forward_button.pack(side=tk.LEFT, padx=5)
 def set_font_size():
     size = int(font_size_input.get())
     tkFont.nametofont("TkDefaultFont").configure(size=size)
-    tkFont.nametofont("TkTextFont").configure(size=size) 
+    tkFont.nametofont("TkTextFont").configure(size=size)
+    
+    root.update_idletasks()
+    root.geometry('{}x{}'.format(root.winfo_reqwidth(), root.winfo_reqheight())) 
 
 font_size_input_frame = tk.Frame(root)
 font_size_input_frame.grid(row=0, column=0, padx=10, pady=10)

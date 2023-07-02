@@ -73,6 +73,7 @@ class dfa:
     def start(self):
         if os.path.exists("./last"):
             shutil.rmtree("./last", ignore_errors=True)
+        os.mkdir("./last")
         file = open("./last/strings.txt", 'w')
         file.close()    
         self.draw_dfa()
