@@ -140,7 +140,7 @@ num_final_dfa_label.grid(row=3, column=1, padx=10, pady=10)
 
 curr_image = 0
 
-image_path = "./last/out" + str(guess.count_final-1) + ".png"
+image_path = "./current_session/out" + str(guess.count_final-1) + ".png"
 image = Image.open(image_path)
 image = image.resize((math.floor(image.width*image_ratio), math.floor(image.height*image_ratio)))
 tk_image = ImageTk.PhotoImage(image)
@@ -155,7 +155,7 @@ def update_dfa_image():
     curr_image = guess.count_final-1
     
     
-    image_path = "./last/out" + str(guess.count_final-1) + ".png"
+    image_path = "./current_session/out" + str(guess.count_final-1) + ".png"
     image = Image.open(image_path)
     image = image.resize((math.floor(image.width*image_ratio), math.floor(image.height*image_ratio)))
     tk_image = ImageTk.PhotoImage(image)
@@ -181,7 +181,7 @@ def next_dfa_image():
     global curr_image
     curr_image += 1
     curr_image = curr_image % guess.count_final
-    image_path = "./last/out" + str(curr_image) + ".png"
+    image_path = "./current_session/out" + str(curr_image) + ".png"
     image = Image.open(image_path)
     image = image.resize((math.floor(image.width*image_ratio), math.floor(image.height*image_ratio)))
     tk_image = ImageTk.PhotoImage(image)
@@ -201,7 +201,7 @@ def prev_dfa_image():
     global curr_image
     curr_image -= 1
     curr_image = curr_image % guess.count_final
-    image_path = "./last/out" + str(curr_image) + ".png"
+    image_path = "./current_session/out" + str(curr_image) + ".png"
     image = Image.open(image_path)
     image = image.resize((math.floor(image.width*image_ratio), math.floor(image.height*image_ratio)))
     tk_image = ImageTk.PhotoImage(image)
@@ -253,7 +253,7 @@ def set_image_size():
     image_ratio = size
     
     global curr_image
-    image_path = "./last/out" + str(curr_image) + ".png"
+    image_path = "./current_session/out" + str(curr_image) + ".png"
     image = Image.open(image_path)
     image = image.resize((math.floor(image.width*image_ratio), math.floor(image.height*image_ratio)))
     tk_image = ImageTk.PhotoImage(image)
@@ -312,8 +312,8 @@ def export_file():
     folder_path = filedialog.askdirectory(initialdir=script_dir)
     
     if folder_path:
-        for file in os.listdir("./last/"):
-            file_path = os.path.join("./last/", file)
+        for file in os.listdir("./current_session/"):
+            file_path = os.path.join("./current_session/", file)
             destination_path = os.path.join(folder_path, file)
             shutil.copy2(file_path, destination_path)
         

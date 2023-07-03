@@ -1,5 +1,5 @@
 import itertools
-import pydot
+import graphviz
 import os
 import shutil
 
@@ -71,26 +71,28 @@ class dfa:
         self.start()
     
     def start(self):
-        if os.path.exists("./last"):
-            shutil.rmtree("./last", ignore_errors=True)
-        os.mkdir("./last")
-        file = open("./last/strings.txt", 'w')
+        if os.path.exists("./current_session"):
+            shutil.rmtree("./current_session", ignore_errors=True)
+        os.mkdir("./current_session")
+        file = open("./current_session/strings.txt", 'w')
         file.close()    
         self.draw_dfa()
     
     def draw_dfa(self):
-        graph = pydot.Dot("dfa", graph_type="graph", bgcolor="white")
-        graph.set_rankdir("LR")
-        graph.add_node(pydot.Node(" ", shape="none", height=.0, width=.0))
+        graph = graphviz.Digraph()
+        graph.attr(rankdir='LR')
+        graph.attr(splines='true')
+        graph.node(" ", style="invisible",width="0", height="0")
         for i in range(self.n):
             if i in self.f:
-                graph.add_node(pydot.Node(str(i), shape="doublecircle"))
+                graph.node(str(i), shape="doublecircle")
             else:
-                graph.add_node(pydot.Node(str(i), shape="circle"))
-        graph.add_edge(pydot.Edge(" ", "0", label="", dir="both", arrowtail="dot"))
+                graph.node(str(i), shape="circle")
+        graph.edge(' ', '0', dir="both", arrowtail="dot")
         for i in range(len(self.delta)):
-            graph.add_edge(pydot.Edge(str(int(i/2)), str(self.delta[i]), label=str(i%2), dir="forward"))
-        graph.write_png("./last/out" + str(self.count_final-1) + ".png")
+            graph.edge(str(int(i/2)), str(self.delta[i]), label=str(i%2), dir="forward")
+        graph.render("./current_session/out" + str(self.count_final-1), format='png')
+        os.remove("./current_session/out" + str(self.count_final-1))
         
     def show_dfa(self):
         print()
@@ -254,7 +256,7 @@ class dfa:
             print("adding: ", is_in, string, "\n")
         
         self.strings += [(is_in, string)]
-        file = open("./last/strings.txt", 'a')
+        file = open("./current_session/strings.txt", 'a')
         if string == "":
             file.write(str(is_in) + " " + "eps" + "\n")
         else:
