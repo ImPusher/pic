@@ -1,4 +1,4 @@
-from dfa import *
+from scientist import *
 import os
 import tkinter as tk
 import math
@@ -8,11 +8,9 @@ from PIL import ImageTk, Image
 
 root = tk.Tk()
 
-k = 2
-to_print = False
 image_ratio = 1
 
-guess = dfa(0,0)
+guess = scientist()
 
 accepted_frame = tk.Frame(root)
 accepted_frame.grid(row=1, column=0, padx=10, pady=10)
@@ -279,7 +277,7 @@ image_size_button.grid(row=0, column=1)
 
 def reset_dfa():
     global guess
-    guess = dfa(0, 0)
+    guess = scientist()
     accepted_listbox.delete(0, tk.END)
     rejected_listbox.delete(0, tk.END)
     update_dfa_image()
