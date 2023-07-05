@@ -291,6 +291,7 @@ image_size_button.grid(row=0, column=1)
 
 def reset_dfa():
     global guess
+    print("\r" + " " * 64 + "\r", end="")
     guess = scientist()
     accepted_listbox.delete(0, tk.END)
     rejected_listbox.delete(0, tk.END)
