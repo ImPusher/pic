@@ -23,6 +23,7 @@ class scientist:
         file = open("./current_session/strings.txt", 'w')
         file.close()    
         self.conjecture.render(self.count_final, self.f)
+        print("\r" + str(self.count) + " DFAs processed", end="", flush=True)
         
     def update_conjecture(self):
         while True:
@@ -32,12 +33,12 @@ class scientist:
                 while self.conjecture.delta != []:
                     self.count += 1
                     if self.count % 100000 == 0:
-                        print("\r" + str(self.count) + " dfas processed", end="", flush=True)
+                        print("\r" + str(self.count) + " DFAs processed", end="", flush=True)
                         
                     if self.update_final_states(self.strings) and self.conjecture.is_minimal(self.f):
                         self.count_final += 1
                         self.conjecture.render(self.count_final, self.f)
-                        print("\r" + str(self.count) + " dfas processed", end="", flush=True)
+                        print("\r" + str(self.count) + " DFAs processed", end="", flush=True)
                         
                         return
                     self.conjecture.nextdfa(self.n, self.k)

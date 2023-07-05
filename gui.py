@@ -12,6 +12,14 @@ image_ratio = 1
 
 guess = scientist()
 
+def valid(string):
+    for c in string:
+        if c != '0' and c != '1':
+            return False
+    return True
+
+root.title("Scientist")
+
 accepted_frame = tk.Frame(root)
 accepted_frame.grid(row=1, column=0, padx=10, pady=10)
 
@@ -72,9 +80,12 @@ def accept_string(string):
 
 def get_accepted_string():
     string = accept_input.get()
-    if string == accept_text or guess.known_string(string):
+    if string == accept_text or guess.known_string(string) or not valid(string):
         return
-    accept_string(string)
+    elif string == 'eps':
+        accept_string('')
+    else:
+        accept_string(string)
     
     
 accept_input_frame = tk.Frame(root)
@@ -109,9 +120,12 @@ def reject_string(string):
     
 def get_rejected_string():
     string = reject_input.get()
-    if string == reject_text or guess.known_string(string):
+    if string == reject_text or guess.known_string(string) or not valid(string):
         return
-    reject_string(string)
+    elif string == 'eps':
+        reject_string('')
+    else:
+        reject_string(string)
 
 rejected_input_frame = tk.Frame(root)
 rejected_input_frame.grid(row=2, column=1, padx=10, pady=10)
@@ -129,10 +143,10 @@ reject_input.grid(row=0, column=1)
 reject_button = tk.Button(rejected_input_frame, text="Reject string", command=get_rejected_string)
 reject_button.grid(row=1, column=1)
 
-num_processed_dfa_label = tk.Label(root, text="Number of Dfa's processed: " + str(guess.count))
+num_processed_dfa_label = tk.Label(root, text="Number of DFAs processed: " + str(guess.count))
 num_processed_dfa_label.grid(row=3, column=0, padx=10, pady=10)
 
-num_final_dfa_label = tk.Label(root, text="Number of guesses: " + str(guess.count_final))
+num_final_dfa_label = tk.Label(root, text="Number of Conjectures: " + str(guess.count_final))
 num_final_dfa_label.grid(row=3, column=1, padx=10, pady=10)
 
 
@@ -242,7 +256,7 @@ font_size_input_frame.grid(row=0, column=0, padx=10, pady=10)
 
 font_size_input = tk.Entry(font_size_input_frame)
 font_size_input.grid(row=0, column=0)
-font_size_button = tk.Button(font_size_input_frame, text="Set font size", command=set_font_size)
+font_size_button = tk.Button(font_size_input_frame, text="Set Font Size", command=set_font_size)
 font_size_button.grid(row=0, column=1)
 
 def set_image_size():
@@ -272,7 +286,7 @@ image_size_input_frame.grid(row=0, column=1, padx=10, pady=10)
 
 image_size_input = tk.Entry(image_size_input_frame)
 image_size_input.grid(row=0, column=0)
-image_size_button = tk.Button(image_size_input_frame, text="Set image size", command=set_image_size)
+image_size_button = tk.Button(image_size_input_frame, text="Set Image Ratio", command=set_image_size)
 image_size_button.grid(row=0, column=1)
 
 def reset_dfa():
