@@ -80,7 +80,7 @@ def accept_string(string):
 
 def get_accepted_string():
     string = accept_input.get()
-    if string == accept_text or guess.known_string(string) or not valid(string):
+    if string == accept_text or guess.known_string(string) or (not valid(string) and string != 'eps'):
         return
     elif string == 'eps':
         accept_string('')
@@ -120,7 +120,7 @@ def reject_string(string):
     
 def get_rejected_string():
     string = reject_input.get()
-    if string == reject_text or guess.known_string(string) or not valid(string):
+    if string == reject_text or guess.known_string(string) or (not valid(string) and string != 'eps'):
         return
     elif string == 'eps':
         reject_string('')
