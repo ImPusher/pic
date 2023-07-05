@@ -181,10 +181,10 @@ def update_dfa_image():
     image_label.configure(text=image_path)
     
     global num_processed_dfa_label
-    num_processed_dfa_label.configure(text="Number of Dfa's processed: " + str(guess.count))
+    num_processed_dfa_label.configure(text="Number of DFAs processed: " + str(guess.count))
     
     global num_final_dfa_label
-    num_final_dfa_label.configure(text="Number of guesses: " + str(guess.count_final))
+    num_final_dfa_label.configure(text="Number of Conjectures: " + str(guess.count_final))
     
     root.update_idletasks()
     root.geometry('{}x{}'.format(root.winfo_reqwidth(), root.winfo_reqheight()))
