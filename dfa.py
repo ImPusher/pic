@@ -74,7 +74,6 @@ class dfa:
             
         graph.render("./current_session/out" + str(count_final-1), format='png')
         os.remove("./current_session/out" + str(count_final-1))
-        pass
     
     def is_minimal(self, f):
         marked = {}
